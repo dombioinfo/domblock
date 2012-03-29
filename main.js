@@ -29,9 +29,8 @@ var g_StayingCubeByLevel = new Array(
 );
 var g_blocPenality = 0;
 var g_sessionId = null;
-
 // Create SocketIO instance, connect
-var g_socket = new io.Socket('10.70.0.7', {
+var g_socket = new io.Socket('localhost', {
 	port: 8080,
 	transports: [ 'websocket' , 'xhr-multipart', 'xhr-polling' ]
 });
