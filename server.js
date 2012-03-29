@@ -50,9 +50,8 @@ send404 = function(res){
 };
 
 server.listen(8080);
-
 // socket.io, I choose you
-var io = io.listen(server);
+io = io.listen(server);
 
 var clientList = new Array();
 
@@ -61,27 +60,53 @@ io.on('connection', function(socket) {
 	// now we have a client object!
 	console.log("Connection accepted.");
 	clientList.push('"'+socket.sessionId+'":'+socket+'');
-	
-	socket.on('message', function(clientdata) {
-		console.log("Recieved message: " + clientdata + " - from client " + socket.sessionId);
-		if (clientdata === 'getuserlist') {
-			console.log("send list to client: " + socket.sessionId);
-			var data = {"getuserlist": clientList};
-			socket.send(JSON.stringify(data));
-		} else {
-			clientList["'"+socket.sessionId+"'"] = clientdata;
-			console.log("client " + socket.sessionId + ": " +
-					"[Num bloc=" + clientList["'"+socket.sessionId+"'"]["numbloc"] + "] " +
-					"[Level=" + clientList["'"+socket.sessionId+"'"]["level"] + "] " +
-					"[Score=" + clientList["'"+socket.sessionId+"'"]["score"] + "] " +
-					"[Goal=" + clientList["'"+socket.sessionId+"'"]["goal"] + "]");
-			console.log("Broadcast these data");
-			socket.broadcast(clientdata);
-			clientdata = null;
+    socket.broadcast({
+        action: "userlist",
+        param: clientList
+    });
+
+	socket.on('message', function(reqClient) {
+		console.log("Action: " + reqClient.action + " - from client " + socket.sessionId);
+		switch (reqClient.action) {
+            
+            case 'userlist':
+                console.log("Send list to client: " + socket.sessionId);
+                socket.send({
+                    action: "userlist",
+                    param: clientList
+                });
+                break;
+            case 'hit':
+                clientList["'"+socket.sessionId+"'"] = reqClient.param;
+                console.log("clientList: "+JSON.stringify(clientList));
+                console.log("clientId " + socket.sessionId + ": " +
+                        "[# of bloc=" + clientList["'"+socket.sessionId+"'"].numbloc + "] " +
+                        "[Level=" + clientList["'"+socket.sessionId+"'"].level + "] " +
+                        "[Score=" + clientList["'"+socket.sessionId+"'"].score + "] " +
+                        "[Goal=" + clientList["'"+socket.sessionId+"'"].goal + "]");
+                console.log("Broadcast these data");
+
+                socket.broadcast({
+                    action: 'bchit',
+                    param: {
+                        'numbloc': reqClient.param.numbloc
+                    }
+                });
+                //socket.io.emit('this', reqClient.param);
+                reqClient = null;
+                break;
+
+            default:
+                console.log("Action is '" + reqClient.action + "' is not defined");
+                break;
 		}
 	});
 
 	socket.on('disconnect', function() {
-		console.log("Connected " + socket.sessionId + "terminated.");
+		console.log("[disconnect] Connected " + socket.sessionId + " terminated.");
+        delete clientList[socket.sessionId];
+        for (var client in clientList) {
+            console.log("[disconnect] client: " + client.toString());
+        }
 	});
 });

@@ -28,46 +28,54 @@ var g_StayingCubeByLevel = new Array(
 	0.96
 );
 var g_blocPenality = 0;
+var g_sessionId = null;
 
 // Create SocketIO instance, connect
-var socket = new io.Socket('10.70.0.7', {
+var g_socket = new io.Socket('10.70.0.7', {
 	port: 8080,
 	transports: [ 'websocket' , 'xhr-multipart', 'xhr-polling' ]
 });
 // Add a connect listener
-socket.on('connection', function() {
+g_socket.on('connection', function() {
 	console.log('Client has connected to the server!');
+    g_sessionId = this.sessionId;
 });
 //Add a message listener
-socket.on('message', function(data) {
-	console.log('Received a message from the server! data: ' + data);
-	console.log(typeof data);
-	if (typeof data === 'string') {
-		data = JSON.parse(data);
-		if (data["getuserlist"]) {
-			getuserlist(data["getuserlist"]);
-		}
-	} else {
-		console.log("Bloc penality : " + data["numbloc"]);
-		g_Domblock.addPenality(data["numbloc"]);
-		data["numbloc"] = 0;
-	}
-	
+g_socket.on('message', function(data) {
+	console.debug("Received a message from the server!");
+	//if (typeof data == 'string') {
+        //data = JSON.parse(data);
+        console.debug("data: " + data);
+        switch (data.action) {
+            case "userlist":
+                console.debug("["+data.action+"]");
+                getuserlist(data.param);
+                break;
+            case "bchit":
+                console.debug("["+data.action+"]"+JSON.stringify(data));
+                console.debug("data.param.numbloc: " + data.param.numbloc);
+                g_Domblock.addPenality(data.param.numbloc);
+                break;
+            default:
+                console.warn("Action: '"+data.action+"' is not defined");
+                break;
+        } // switch
+    //}
 });
 // Add a disconnect listener
-socket.on('disconnect', function() {
+g_socket.on('disconnect', function() {
 	console.log('The client has disconnected!');
 });
 // Sends a message to the server via sockets
 function sendMessageToServer(clientdata) {
-	console.log("Envoi d'un message au serveur : " + clientdata);
-	socket.send(clientdata);
+	console.debug("Envoi d'un message au serveur : " + clientdata);
+	g_socket.send(clientdata);
 }
 // Get user list from the server 
 function getuserlist(clientList) {
-	console.log('Processing user list: ' + clientList);
+	console.debug('Processing user list: ' + clientList);
 	var userlist = "";
-	console.debug("nombre d'Id : " + clientList.length);
+	console.debug("nombre de sessionId : " + clientList.length);
 	for (var object in clientList) {
 		console.log(clientList[object]);
 		for (var client in object) {
@@ -84,7 +92,7 @@ function run() {
 	g_Domblock = new DomBlock();
 	initObject();
 	
-	sendMessageToServer('getuserlist');
+	sendMessageToServer({action: 'userlist'});
 	
 	// On r�cup�re l'objet canvas
 	var o_Canvas = document.getElementById('boardgame');
@@ -123,10 +131,11 @@ function test(event) {
 
 function initObject() {
 	console.debug("[initObject] Start");
-	
-	if (socket != null) {
-		socket.disconnect();
-		socket.connect();
+
+    // TODO : manage the unload event
+	if (g_socket != null) {
+		g_socket.disconnect();
+		g_socket.connect();
 	}
 	
 	g_Domblock.initMap(g_NbColor);
@@ -213,7 +222,7 @@ function myMouseMove(event) {
 			g_Domblock.initZone();
 			initHover();
 			g_Domblock.getZone(cubeIdRow, cubeIdCol, g_Domblock.map[cubeIdRow][cubeIdCol]);
-			//console.debug("[mouse] indexZone = " + g_Domblock.indexZone);
+			//console.debug("[myMouseMove] indexZone = " + g_Domblock.indexZone);
 			if (g_Domblock.indexZone > 1) {
 				displayScore4Zone(event);
 				for (var l=0; l<=g_Domblock.indexZone; l++) {
@@ -252,11 +261,10 @@ function myClick(event) {
 	if (event.target instanceof HTMLCanvasElement) {
 		console.debug("[myClick] "+a_CoordMouse[0] + "; "+a_CoordMouse[1]);
 		if (g_Domblock.map[a_CoordMouse[0]][a_CoordMouse[1]] != 0) {
-			if (g_Domblock.indexZone > 1) {
-				console.debug("[myClick] ");
+			console.debug("[myClick] indexZone = " + g_Domblock.indexZone);
+            if (g_Domblock.indexZone > 1) {
 				g_Domblock.updateMap();
-				var bonus = 0;
-				bonus = g_Domblock.indexZone / (g_Domblock.COL * g_Domblock.ROW);
+				var bonus = g_Domblock.indexZone / (g_Domblock.COL * g_Domblock.ROW);
 				g_Score += g_Domblock.indexZone*Math.floor(g_PointCube*(1.5+bonus));
 			}
 			initHover();
@@ -276,7 +284,7 @@ function myClick(event) {
 				}
 			} // if !isContinuable
 		} // if map[x][y] != 0
-		updatePane(g_Domblock.indexZone+1);
+		updatePane(g_Domblock.indexZone + 1);
 		refresh();
 	} // if HTMLCanvasElement
 } // myClick
@@ -321,14 +329,20 @@ function updatePane(numBloc) {
 	var goal = g_Domblock.nbDestroyedCube + "/" + Math.floor(g_StayingCubeByLevel[g_Level] * totalCube);
 	document.getElementById("goal").innerHTML = goal;
 	
-	if (socket != null) {
-		message = {
-			"numbloc": numBloc,
-			"level": (g_Level + 1),
-			"score": g_Score,
-			"goal": goal
+	if (g_socket != null) {
+
+        var message = {
+            action: 'hit',
+            param: {
+                "numbloc": numBloc,
+                "level": (g_Level + 1),
+                "score": g_Score,
+                "goal": goal
+            }
 		};
-		sendMessageToServer(message);
+		console.debug("[updatePane] message: " + JSON.stringify(message));
+        sendMessageToServer(message);
 	}
 }
 window.addEventListener('load', run, false);
+window.addEventListener('unload', g_socket.disconnect, false);
