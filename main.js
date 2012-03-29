@@ -257,14 +257,16 @@ function displayScore4Zone(event) {
 
 function myClick(event) {
 	var a_CoordMouse = myMouseMove(event);
+    var numBloc = 0;
 	if (event.target instanceof HTMLCanvasElement) {
 		console.debug("[myClick] "+a_CoordMouse[0] + "; "+a_CoordMouse[1]);
 		if (g_Domblock.map[a_CoordMouse[0]][a_CoordMouse[1]] != 0) {
 			console.debug("[myClick] indexZone = " + g_Domblock.indexZone);
             if (g_Domblock.indexZone > 1) {
-				g_Domblock.updateMap();
+                numBloc = g_Domblock.indexZone + 1;
 				var bonus = g_Domblock.indexZone / (g_Domblock.COL * g_Domblock.ROW);
 				g_Score += g_Domblock.indexZone*Math.floor(g_PointCube*(1.5+bonus));
+                g_Domblock.updateMap();
 			}
 			initHover();
 			if (!g_Domblock.isContinuable()) {
@@ -283,7 +285,7 @@ function myClick(event) {
 				}
 			} // if !isContinuable
 		} // if map[x][y] != 0
-		updatePane(g_Domblock.indexZone + 1);
+		updatePane(numBloc);
 		refresh();
 	} // if HTMLCanvasElement
 } // myClick
