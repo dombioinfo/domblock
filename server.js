@@ -59,7 +59,13 @@ io.on('connection', function(socket) {
 	//console.log(socket);
 	// now we have a client object!
 	console.log("Connection accepted.");
-	clientList.push('"'+socket.sessionId+'":'+socket+'');
+
+	clientList.push(
+        socket.sessionId = {
+            surname: "surname_"+clientList.length,
+            data: null
+        }
+    );
     socket.broadcast({
         action: "userlist",
         param: clientList
@@ -77,13 +83,13 @@ io.on('connection', function(socket) {
                 });
                 break;
             case 'hit':
-                clientList["'"+socket.sessionId+"'"] = reqClient.param;
+                clientList["'"+socket.sessionId+"'"].data = reqClient.param;
                 console.log("clientList: "+JSON.stringify(clientList));
                 console.log("clientId " + socket.sessionId + ": " +
-                        "[# of bloc=" + clientList["'"+socket.sessionId+"'"].numbloc + "] " +
-                        "[Level=" + clientList["'"+socket.sessionId+"'"].level + "] " +
-                        "[Score=" + clientList["'"+socket.sessionId+"'"].score + "] " +
-                        "[Goal=" + clientList["'"+socket.sessionId+"'"].goal + "]");
+                        "[# of bloc=" + clientList["'"+socket.sessionId+"'"].data.numbloc + "] " +
+                        "[Level=" + clientList["'"+socket.sessionId+"'"].data.level + "] " +
+                        "[Score=" + clientList["'"+socket.sessionId+"'"].data.score + "] " +
+                        "[Goal=" + clientList["'"+socket.sessionId+"'"].data.goal + "]");
                 console.log("Broadcast these data");
 
                 socket.broadcast({

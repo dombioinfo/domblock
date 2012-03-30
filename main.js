@@ -72,15 +72,12 @@ function sendMessageToServer(clientdata) {
 }
 // Get user list from the server 
 function getuserlist(clientList) {
-	console.debug('Processing user list: ' + clientList);
+	console.debug('[getuserlist] Processing user list: ' + JSON.stringify(clientList));
 	var userlist = "";
-	console.debug("nombre de sessionId : " + clientList.length);
-	for (var object in clientList) {
-		console.log(clientList[object]);
-		for (var client in object) {
-			console.debug("<li>"+object[0]+"</li>");
-			userlist += "<li>"+object[0]+"</li>\n";
-		}
+	console.debug("[getuserlist] nombre de sessionId : " + clientList.length);
+	for (var session in clientList) {
+		console.log("[getuserlist] surname: " + clientList[session].surname);
+        userlist += "<li>"+clientList[session].surname+"</li>\n";
 	}
 	document.getElementById("userlist").innerHTML = userlist;
 }
@@ -346,4 +343,4 @@ function updatePane(numBloc) {
 	}
 }
 window.addEventListener('load', run, false);
-window.addEventListener('unload', g_socket.disconnect, false);
+window.addEventListener('beforeunload ', g_socket.disconnect, false);
