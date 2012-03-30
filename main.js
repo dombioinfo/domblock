@@ -284,9 +284,9 @@ function myClick(event) {
 					run();
 				}
 			} // if !isContinuable
+            updatePane(numBloc);
+            refresh();
 		} // if map[x][y] != 0
-		updatePane(numBloc);
-		refresh();
 	} // if HTMLCanvasElement
 } // myClick
 

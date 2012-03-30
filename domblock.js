@@ -175,23 +175,23 @@ function DomBlock () {
 	 * 
 	 */
 	this.addPenality = function(numPenality) {
-		for (var k=0; k<numPenality; k++) {
-			var nextPenality = false;
-			// search a empty place
-			for (var i=0; i<this.ROW; i++) {
-				for(var j=0; j<this.COL; j++) {
-					if (this.map[i][j] == 0) {
-						this.map[i][j] = (Math.round(Math.random()*1000)) % this.nbMaxColor + 1;
-						nextPenality = true;
-						break;
-					}
-				} // for COL
-				if (nextPenality) {
-					break;
-				}
-			} // for ROW
-		} // for penality
-		
+        var nextPenality = false;
+        // search a empty place
+        for (var i=0; i<this.ROW; i++) {
+            for(var j=0; j<this.COL; j++) {
+                if (this.map[i][j] == 0) {
+                    this.map[i][j] = (Math.round(Math.random()*1000)) % this.nbMaxColor + 1;
+                    numPenality--;
+                    if (numPenality == 0) {
+                        break;
+                    }
+                }
+            } // for COL
+            if (numPenality == 0) {
+                break;
+            }
+        } // for ROW
+		this.indexZone = -1;
 		this.updateMap();
 	};
 	

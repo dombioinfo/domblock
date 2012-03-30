@@ -1,7 +1,7 @@
 var http = require('http')
 , url = require('url')
 , fs = require('fs')
-, io = require('socket.io')
+, io = require('./plugins/socket.io')
 , server;
 
 server = http.createServer(function(req, res){
