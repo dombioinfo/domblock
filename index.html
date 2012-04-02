@@ -16,7 +16,12 @@
 		Your browser doesn't support HTML5
 	</canvas>
 	<div style="float: left">
-		<fieldset style="width: 6em;margin-top:3px;background:#f9f9f9"><legend style="margin:0px 4px;background:#f9f9f9">Level/Goal</legend>
+        <fieldset>
+            <form action="index.html" type="post" onsubmit="javascript:updateServer('server');">
+                <input id="server" type="text" name="server" value="" />
+            </form>
+        </fieldset>
+        <fieldset style="width: 6em;margin-top:3px;background:#f9f9f9"><legend style="margin:0px 4px;background:#f9f9f9">Level/Goal</legend>
 			<div id="level"></div>
 			<hr/>
 			<div id="goal"></div>

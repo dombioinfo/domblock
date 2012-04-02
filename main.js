@@ -29,21 +29,27 @@ var g_StayingCubeByLevel = new Array(
 );
 var g_blocPenality = 0;
 var g_sessionId = null;
+var g_server = "localhost";
 // Create SocketIO instance, connect
-var g_socket = new io.Socket('localhost', {
-	port: 8080,
-	transports: [ 'websocket' , 'xhr-multipart', 'xhr-polling' ]
-});
-// Add a connect listener
-g_socket.on('connection', function() {
-	console.log('Client has connected to the server!');
-    g_sessionId = this.sessionId;
-});
-//Add a message listener
-g_socket.on('message', function(data) {
-	console.debug("Received a message from the server!");
-	//if (typeof data == 'string') {
-        //data = JSON.parse(data);
+var g_socket = null;
+
+function initSocket(server) {
+    if (server == null) {
+        server = g_server;
+    }
+    
+    g_socket = new io.Socket(server, {
+        port: 8080,
+        transports: [ 'websocket' , 'xhr-multipart', 'xhr-polling' ]
+    });
+    // Add a connect listener
+    g_socket.on('connection', function() {
+        console.log('Client has connected to the server!');
+        g_sessionId = this.sessionId;
+    });
+    //Add a message listener
+    g_socket.on('message', function(data) {
+        console.debug("Received a message from the server!");
         console.debug("data: " + data);
         switch (data.action) {
             case "userlist":
@@ -54,37 +60,41 @@ g_socket.on('message', function(data) {
                 console.debug("["+data.action+"]"+JSON.stringify(data));
                 console.debug("data.param.numbloc: " + data.param.numbloc);
                 g_Domblock.addPenality(data.param.numbloc);
+                refresh();
                 break;
             default:
                 console.warn("Action: '"+data.action+"' is not defined");
                 break;
         } // switch
-    //}
-});
-// Add a disconnect listener
-g_socket.on('disconnect', function() {
-	console.log('The client has disconnected!');
-});
+    });
+    // Add a disconnect listener
+    g_socket.on('disconnect', function() {
+        console.log('The client has disconnected!');
+    });
+}
+
 // Sends a message to the server via sockets
 function sendMessageToServer(clientdata) {
 	console.debug("Envoi d'un message au serveur : " + clientdata);
 	g_socket.send(clientdata);
 }
 // Get user list from the server 
-function getuserlist(clientList) {
-	console.debug('[getuserlist] Processing user list: ' + JSON.stringify(clientList));
-	var userlist = "";
-	console.debug("[getuserlist] nombre de sessionId : " + clientList.length);
-	for (var session in clientList) {
-		console.log("[getuserlist] surname: " + clientList[session].surname);
-        userlist += "<li>"+clientList[session].surname+"</li>\n";
+function getuserlist(playerList) {
+	console.debug('[getuserlist] Processing user list: ' + JSON.stringify(playerList));
+    console.debug("[getuserlist] nombre de sessionId : " + playerList.length);
+	var userlistHTML = "";
+	for (var session in playerList) {
+		console.log("[getuserlist] surname: " + playerList[session]);
+        userlistHTML += "<li>"+playerList[session]+"</li>\n";
 	}
-	document.getElementById("userlist").innerHTML = userlist;
+	document.getElementById("userlist").innerHTML = userlistHTML;
 }
 
 function run() {
 	console.debug("[run] Start");
 	
+    document.getElementById("server").value = g_server;
+
 	g_Domblock = new DomBlock();
 	initObject();
 	
@@ -191,8 +201,8 @@ function refresh() {
 } // refresh
 
 function keyboard(event) {
-	console.debug("[keyboard] Start");
-	console.debug("Key = " + event.keyCode);
+	//console.debug("[keyboard] Start");
+	//console.debug("Key = " + event.keyCode);
 	if (event.keyCode == 39) { // Fleche de droite pr�ss�e
 		
 	} else if (event.keyCode == 37) { // Fleche de gauche pr�ss�e
@@ -204,7 +214,7 @@ function keyboard(event) {
 		quit("Quit");
 	}
 	refresh();
-	console.debug("[keyboard] Stop");
+	//console.debug("[keyboard] Stop");
 } // keyboard
 
 function myMouseMove(event) {
@@ -254,7 +264,7 @@ function displayScore4Zone(event) {
 
 function myClick(event) {
 	var a_CoordMouse = myMouseMove(event);
-    var numBloc = 0;
+    var numBloc = -1;
 	if (event.target instanceof HTMLCanvasElement) {
 		console.debug("[myClick] "+a_CoordMouse[0] + "; "+a_CoordMouse[1]);
 		if (g_Domblock.map[a_CoordMouse[0]][a_CoordMouse[1]] != 0) {
@@ -342,5 +352,13 @@ function updatePane(numBloc) {
         sendMessageToServer(message);
 	}
 }
+
+function updateServer(objId) {
+    g_server = document.getElementById(objId).value;
+    alert("test: " + g_server);
+    initSocket(g_server);
+}
+
+initSocket(g_server);
 window.addEventListener('load', run, false);
 window.addEventListener('beforeunload ', g_socket.disconnect, false);

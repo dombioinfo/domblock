@@ -60,37 +60,36 @@ io.on('connection', function(socket) {
 	// now we have a client object!
 	console.log("Connection accepted.");
 
-	clientList.push(
-        socket.sessionId = {
-            surname: "surname_"+clientList.length,
-            data: null
-        }
-    );
+	//clientList.push(socket.sessionId);
+    clientList[socket.sessionId] = {
+        surname: "Player"+ (clientList.length++),
+        data: null
+    };
     socket.broadcast({
         action: "userlist",
-        param: clientList
+        param: getSurnameList()
     });
 
 	socket.on('message', function(reqClient) {
-		console.log("Action: " + reqClient.action + " - from client " + socket.sessionId);
+		console.log("[message] Action: " + reqClient.action + " - from client " + socket.sessionId);
 		switch (reqClient.action) {
             
             case 'userlist':
-                console.log("Send list to client: " + socket.sessionId);
+                console.log("[message][userlist] Send list to client: " + socket.sessionId);
                 socket.send({
                     action: "userlist",
-                    param: clientList
+                    param: getSurnameList()
                 });
                 break;
             case 'hit':
-                clientList["'"+socket.sessionId+"'"].data = reqClient.param;
-                console.log("clientList: "+JSON.stringify(clientList));
-                console.log("clientId " + socket.sessionId + ": " +
-                        "[# of bloc=" + clientList["'"+socket.sessionId+"'"].data.numbloc + "] " +
-                        "[Level=" + clientList["'"+socket.sessionId+"'"].data.level + "] " +
-                        "[Score=" + clientList["'"+socket.sessionId+"'"].data.score + "] " +
-                        "[Goal=" + clientList["'"+socket.sessionId+"'"].data.goal + "]");
-                console.log("Broadcast these data");
+                clientList[socket.sessionId].data = reqClient.param;
+                console.log("[message][hit] size clientList: "+clientList.length);
+                console.log("[message][hit] clientId " + socket.sessionId + ": " +
+                        "[# of bloc=" + clientList[socket.sessionId].data.numbloc + "] " +
+                        "[Level=" + clientList[socket.sessionId].data.level + "] " +
+                        "[Score=" + clientList[socket.sessionId].data.score + "] " +
+                        "[Goal=" + clientList[socket.sessionId].data.goal + "]");
+                console.log("[message][hit] Broadcast these data");
 
                 socket.broadcast({
                     action: 'bchit',
@@ -103,7 +102,7 @@ io.on('connection', function(socket) {
                 break;
 
             default:
-                console.log("Action is '" + reqClient.action + "' is not defined");
+                console.log("[message][default] Action is '" + reqClient.action + "' is not defined");
                 break;
 		}
 	});
@@ -111,8 +110,18 @@ io.on('connection', function(socket) {
 	socket.on('disconnect', function() {
 		console.log("[disconnect] Connected " + socket.sessionId + " terminated.");
         delete clientList[socket.sessionId];
-        for (var client in clientList) {
-            console.log("[disconnect] client: " + client.toString());
-        }
+        socket.broadcast({
+            action: "userlist",
+            param: getSurnameList()
+        });
 	});
 });
+
+function getSurnameList() {
+    var userListSurname = new Array();
+    for (var sessionId in clientList) {
+        console.log("[message] name: " + sessionId + " surname: " + clientList[sessionId].surname);
+        userListSurname.push(clientList[sessionId].surname);
+    }
+    return userListSurname;
+}
