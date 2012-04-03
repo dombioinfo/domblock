@@ -59,7 +59,7 @@ function initSocket(server) {
             case "bchit":
                 console.debug("["+data.action+"]"+JSON.stringify(data));
                 console.debug("data.param.numbloc: " + data.param.numbloc);
-                g_Domblock.addPenality(data.param.numbloc);
+                g_Domblock.addPenality(data.param.numbloc, DomBlock.PENALITY_MODIFY);
                 refresh();
                 break;
             default:
@@ -92,8 +92,10 @@ function getuserlist(playerList) {
 
 function run() {
 	console.debug("[run] Start");
-	
-    document.getElementById("server").value = g_server;
+	var inputServer = document.getElementById("server");
+    if (inputServer && inputServer != undefined) {
+        inputServer.value = g_server;
+    }
 
 	g_Domblock = new DomBlock();
 	initObject();
@@ -295,6 +297,7 @@ function myClick(event) {
             refresh();
 		} // if map[x][y] != 0
 	} // if HTMLCanvasElement
+    return null;
 } // myClick
 
 function clearContext(ctx, startwidth, ctxwidth, startheight, ctxheight) {
@@ -355,8 +358,9 @@ function updatePane(numBloc) {
 
 function updateServer(objId) {
     g_server = document.getElementById(objId).value;
-    alert("test: " + g_server);
-    initSocket(g_server);
+    if (g_server && g_server != undefined) {
+        initSocket(g_server);
+    }
 }
 
 initSocket(g_server);

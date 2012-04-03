@@ -7,34 +7,38 @@
 	<script src="http://jqueryjs.googlecode.com/files/jquery-1.2.6.min.js" type="text/javascript"></script>
 	<script src="http://cdn.socket.io/stable/socket.io.js"></script>
 	<!-- <script type="text/javascript" src="/socket.io/socket.io.js"></script> -->
-	<script type="text/javascript" src="./domblock.js"></script>
-	<script type="text/javascript" src="./objects.js"></script>
-	<script type="text/javascript" src="./main.js"></script>
+	<script type="text/javascript" src="/domblock.js"></script>
+	<script type="text/javascript" src="/objects.js"></script>
+	<script type="text/javascript" src="/main.js"></script>
+    <link rel="stylesheet" type="text/css" href="/res/style.css" />
 </head>
-<body style="text-align: center; background: #5A5A5A; width: 100%;">
-	<canvas id="boardgame" width="560" height="520" style="margin-right: auto; margin-left: auto;background:#050505; margin: 5px; float:left; border:1px solid black;">
+<body>
+	<canvas id="boardgame" width="560" height="520">
 		Your browser doesn't support HTML5
 	</canvas>
-	<div style="float: left">
+	<div class="left">
+        <!--
         <fieldset>
-            <form action="index.html" type="post" onsubmit="javascript:updateServer('server');">
+            <form action="index.html" method="post" onsubmit="javascript:updateServer('server');">
                 <input id="server" type="text" name="server" value="" />
             </form>
         </fieldset>
-        <fieldset style="width: 6em;margin-top:3px;background:#f9f9f9"><legend style="margin:0px 4px;background:#f9f9f9">Level/Goal</legend>
+        -->
+        <fieldset><legend>Level/Goal</legend>
 			<div id="level"></div>
 			<hr/>
 			<div id="goal"></div>
 		</fieldset>
-		<fieldset style="width: 6em;margin-top:3px;background:#f9f9f9"><legend style="margin:0px 4px;background:#f9f9f9">Score</legend>
+		<fieldset><legend>Score</legend>
 			<div id="score"></div>
 		</fieldset>
-		<fieldset style="width: 6em;margin-top:8px;background:#f9f9f9;">
+        <fieldset><legend></legend>
 			<a href="" onclik="run();">New game</a>
 		</fieldset>
-		<fieldset style="width: 6em;margin-top:3px;background:#f9f9f9"><legend style="margin:0px 4px;background:#f9f9f9">User list</legend>
+		<fieldset><legend>User list</legend>
 			<ul id="userlist"></ul>
 		</fieldset>
 	</div>
+    <div class="clear"></div>
 </body>
 </html>

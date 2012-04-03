@@ -174,13 +174,16 @@ function DomBlock () {
 	/**
 	 * 
 	 */
-	this.addPenality = function(numPenality) {
-        var nextPenality = false;
+	this.addPenality = function(numPenality, type) {
         // search a empty place
         for (var i=0; i<this.ROW; i++) {
             for(var j=0; j<this.COL; j++) {
-                if (this.map[i][j] == 0) {
+                if ((type == Domblock.PENALITY_ADD && this.map[i][j] == 0) || (type == Domblock.PENALITY_MODIFY && this.map[i][j] > 0)) {
+                    var previousValue = this.map[i][j];
                     this.map[i][j] = (Math.round(Math.random()*1000)) % this.nbMaxColor + 1;
+                    if (type == Domblock.PENALITY_ADD && previousValue == this.map[i][j]) {
+                        this.map[i][j] = (this.map[i][j]+1)%this.nbMaxColor + 1;
+                    }
                     numPenality--;
                     if (numPenality == 0) {
                         break;
@@ -197,3 +200,6 @@ function DomBlock () {
 	
 	return this;
 }
+
+DomBlock.prototype.PENALITY_ADD = 0;
+DomBlock.prototype.PENALITY_MODIFY = 1;
