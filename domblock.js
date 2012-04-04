@@ -175,13 +175,14 @@ function DomBlock () {
 	 * 
 	 */
 	this.addPenality = function(numPenality, type) {
-        // search a empty place
-        for (var i=0; i<this.ROW; i++) {
-            for(var j=0; j<this.COL; j++) {
-                if ((type == Domblock.PENALITY_ADD && this.map[i][j] == 0) || (type == Domblock.PENALITY_MODIFY && this.map[i][j] > 0)) {
+        // search a place to apply penality
+        for (var i=this.ROW-1; i>=0; i--) {
+            for(var j=this.COL-1; j>=0; j--) {
+                console.debug("[DomBlock::addPenality] ");
+                if ((type == DomBlock.PENALITY_ADD && this.map[i][j] == 0) || (type == DomBlock.PENALITY_MODIFY && this.map[i][j] > 0)) {
                     var previousValue = this.map[i][j];
                     this.map[i][j] = (Math.round(Math.random()*1000)) % this.nbMaxColor + 1;
-                    if (type == Domblock.PENALITY_ADD && previousValue == this.map[i][j]) {
+                    if (type == DomBlock.PENALITY_MODIFY && previousValue == this.map[i][j]) {
                         this.map[i][j] = (this.map[i][j]+1)%this.nbMaxColor + 1;
                     }
                     numPenality--;

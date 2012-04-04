@@ -293,7 +293,9 @@ function myClick(event) {
 					run();
 				}
 			} // if !isContinuable
-            updatePane(numBloc);
+            if (numBloc > 2) {
+                updatePane(numBloc);
+            }
             refresh();
 		} // if map[x][y] != 0
 	} // if HTMLCanvasElement

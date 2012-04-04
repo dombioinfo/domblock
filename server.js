@@ -97,6 +97,7 @@ io.on('connection', function(socket) {
                         'numbloc': reqClient.param.numbloc
                     }
                 });
+
                 //socket.io.emit('this', reqClient.param);
                 reqClient = null;
                 break;
