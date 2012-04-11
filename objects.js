@@ -6,17 +6,17 @@ function Bloc (initPosX, initPosY) {
 	this.dY = 0; // Math.random()%10;
 	
 	this.imgObj = new Image();
-	this.imgObj.src = "./res/01_sprite_cube.png";
+	this.imgObj.src = "./res/03_sprite_cube.png";
 	this.imgObjHover = new Image();
-	this.imgObjHover.src = "./res/01_sprite_cube_hover.png";
+	this.imgObjHover.src = "./res/03_sprite_cube_hover.png";
 	
-	// variables spécifiques
+	// variables spï¿½cifiques
 	this.bHover = false;
 	
 	this.widthSprite = new Array(40, 40, 40, 40, 40, 40, 40);
 	this.heightSprite = new Array(40, 40, 40, 40, 40, 40, 40);
 	
-	// méthode de base
+	// mï¿½thode de base
 	this.display = function(context, spriteIndex, bHover) {
 		
 		if (spriteIndex != -1 && this.imgObj) {
