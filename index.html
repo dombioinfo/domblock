@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html style="width:100%;margin:0;padding:0;">
+<html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<title>DomBlock</title>
@@ -13,9 +13,9 @@
     <link rel="stylesheet" type="text/css" href="/res/style.css" />
 </head>
 <body>
-	<canvas id="boardgame" width="560" height="520">
-		Your browser doesn't support HTML5
-	</canvas>
+    <canvas id="boardgame" width="560" height="520">
+        Your browser doesn't support HTML5
+    </canvas>
 	<div class="left">
         <!--
         <fieldset>
@@ -30,7 +30,8 @@
 			<div id="goal"></div>
 		</fieldset>
 		<fieldset><legend>Score</legend>
-			<div id="score"></div>
+            <div id="status"></div>
+            <div id="score"></div>
 		</fieldset>
         <fieldset><legend></legend>
 			<a href="" onclik="run();">New game</a>

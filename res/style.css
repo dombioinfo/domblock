@@ -8,11 +8,12 @@
 root { 
     display: block;
 }
-body {
+html, body {
+    width:100%; margin:0; padding: 0;
     text-align: center; background: #5A5A5A; width: 100%;
 }
 canvas {
-    margin-right: auto; margin-left: auto;background:#050505; margin: 5px; float:left; border:1px solid black;
+    width: 560px;height: 520px;margin-right: auto; margin-left: auto;background:#050505; margin: 5px; float:left; border:1px solid black;
 }
 fieldset {
     width: 6em;margin-top:3px;background:#f9f9f9;
@@ -26,4 +27,3 @@ legend {
 .clear {
     clear: both;
 }
-

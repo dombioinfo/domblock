@@ -102,7 +102,7 @@ function run() {
 	
 	sendMessageToServer({action: 'userlist'});
 	
-	// On r�cup�re l'objet canvas
+	// On récupère l'objet canvas
 	var o_Canvas = document.getElementById('boardgame');
 	if (!o_Canvas || !o_Canvas.getContext) {
 		return;
@@ -110,21 +110,21 @@ function run() {
 	BOARD_WIDTH = o_Canvas.width;
 	BOARD_HEIGHT = o_Canvas.height;
 	
-	//On r�cup�re le contexte 2D
+	//On récupère le contexte 2D
 	g_Context = o_Canvas.getContext('2d');
 	if (!g_Context) {
 		return;
 	}
 	
-	// Gestion des �v�nements
+	// Gestion des événements
 	window.document.onkeydown = keyboard;
 	window.document.onmousemove = myMouseMove;
 	window.document.onclick = myClick;
 	//window.document.onmouseover = test;
 	
-	// Le navigateur est compatible, le contexte a bien �t� r�cup�r�, on peut continuer...
+	// Le navigateur est compatible, le contexte a bien été récupéré, on peut continuer...
 	//gi_LoopID = setInterval(refresh, 40);
-	
+	refresh();
 	console.debug("[run] Stop");
 } // run 
 
@@ -169,7 +169,6 @@ function initObject() {
 			//console.debug("[initObject] ind=" + indice + " :  [" + ga_ObjectList[indice].posX + ", " + ga_ObjectList[indice].posY +"]");
 		}
 	}
-	
 	console.debug("[initObject] Stop");
 }
 
@@ -194,12 +193,10 @@ function refresh() {
 		var y = i%g_Domblock.COL;
 		obj.display(g_Context, g_Domblock.map[x][y], ga_ObjectList[i].bHover);
 	}
-		
-	//quit("Game over");
+	updatePane(0, false);
 	if (g_bGameOver) {
 		quit("Game over");
 	}
-
 } // refresh
 
 function keyboard(event) {
@@ -294,7 +291,7 @@ function myClick(event) {
 				}
 			} // if !isContinuable
             if (numBloc > 2) {
-                updatePane(numBloc);
+                updatePane(numBloc, true);
             }
             refresh();
 		} // if map[x][y] != 0
@@ -307,26 +304,12 @@ function clearContext(ctx, startwidth, ctxwidth, startheight, ctxheight) {
 } // clearContext
 
 function quit(sz_Msg) {
-	clearInterval(gi_LoopID);
-	var sizeChar = 24;
-	var i_MsgWidth = sz_Msg.length*sizeChar + 60;
-	var i_MsgHeight = 80;
-	var i_MsgPosX = Math.floor((BOARD_WIDTH - i_MsgWidth)/2);
-	var i_MsgPosY = Math.floor((BOARD_HEIGHT - i_MsgHeight)/2);
-	g_Context.save();
-	g_Context.translate(i_MsgPosX, i_MsgPosY);
-	clearContext(g_Context, 0, i_MsgWidth, 0, i_MsgHeight);
-	g_Context.fillStyle = "#333333";
-	g_Context.fillRect(0, i_MsgWidth, 0, i_MsgHeight);
-	g_Context.fillStyle = "#000000";
-	g_Context.font = "36pt Calibri";
-	g_Context.fillText(sz_Msg, i_MsgWidth/2-(sz_Msg.length/2)*sizeChar, i_MsgHeight/2+10);
-	g_Context.beginPath();
-	g_Context.rect(0, 0, i_MsgWidth, i_MsgHeight);
-	//g_Context.strokeStyle = "#8ED6FF";
-	g_Context.lineWidth = 2;
-    g_Context.stroke();
-	g_Context.restore();
+    $('#status').html(sz_Msg);
+    $('#boardgame').css("opacity", "0.3");
+    window.document.onkeydown = null;
+	window.document.onmousemove = null;
+	window.document.onclick = null;
+
 } // quit
 
 function initHover() {
@@ -335,14 +318,14 @@ function initHover() {
 	}
 }
 
-function updatePane(numBloc) {
+function updatePane(numBloc, sendStatus) {
 	document.getElementById("level").innerHTML = (g_Level + 1);
 	document.getElementById("score").innerHTML = g_Score;
 	var totalCube = g_Domblock.COL * g_Domblock.ROW;
 	var goal = g_Domblock.nbDestroyedCube + "/" + Math.floor(g_StayingCubeByLevel[g_Level] * totalCube);
 	document.getElementById("goal").innerHTML = goal;
 	
-	if (g_socket != null) {
+	if (sendStatus && g_socket != null) {
 
         var message = {
             action: 'hit',

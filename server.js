@@ -22,6 +22,7 @@ server = http.createServer(function(req, res){
 			break;
 		case regex[1].test(path):
 		case regex[2].test(path):
+            console.log("[switch 1/2] " + regex[2] + " : " + path);
 			fs.readFile(__dirname + path, function(err, data){
 				if (err) return send404(res);
 				res.writeHead(200, {'Content-Type': path.match("/*.js/") ? 'text/javascript' : 'text/html'});
@@ -30,6 +31,7 @@ server = http.createServer(function(req, res){
 			});
 			break;
 		case regex[3].test(path):
+            console.log("[switch 3] " + regex[3] + " : " + path);
 			fs.readFile(__dirname + path, function(err, data){
 				if (err) return send404(res);
 				res.writeHead(200, {'Content-Type': 'image/png'});
