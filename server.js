@@ -65,7 +65,8 @@ io.on('connection', function(socket) {
 	//clientList.push(socket.sessionId);
     clientList[socket.sessionId] = {
         surname: "Player"+ (clientList.length++),
-        data: null
+        data: null,
+        status: "connected"
     };
     socket.broadcast({
         action: "userlist",
@@ -112,19 +113,24 @@ io.on('connection', function(socket) {
 
 	socket.on('disconnect', function() {
 		console.log("[disconnect] Connected " + socket.sessionId + " terminated.");
-        delete clientList[socket.sessionId];
+        if (clientList[sessionId].status == "connected") {
+            clientList[sessionId].status = null;
+        }
         socket.broadcast({
             action: "userlist",
             param: getSurnameList()
         });
+        delete clientList[socket.sessionId];
 	});
 });
 
 function getSurnameList() {
     var userListSurname = new Array();
     for (var sessionId in clientList) {
-        console.log("[message] name: " + sessionId + " surname: " + clientList[sessionId].surname);
-        userListSurname.push(clientList[sessionId].surname);
+        if (clientList[sessionId].status == "connected") {
+            console.log("[message] name: " + sessionId + " surname: " + clientList[sessionId].surname);
+            userListSurname.push(clientList[sessionId].surname);
+        }
     }
     return userListSurname;
 }
