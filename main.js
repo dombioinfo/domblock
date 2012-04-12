@@ -9,7 +9,7 @@ var g_NbColor = 3;
 var g_bGameOver = false;
 var g_Level = 0;
 var g_Score = 0;
-var g_PointCube = 15;
+var g_PointCube = 45;
 var g_StayingCubeByLevel = new Array(
 	0.88, // niveau 1
 	0.90, // niveau 2
@@ -37,7 +37,7 @@ function initSocket(server) {
     if (server == null) {
         server = g_server;
     }
-    
+
     g_socket = new io.Socket(server, {
         port: 8080,
         transports: [ 'websocket' , 'xhr-multipart', 'xhr-polling' ]
@@ -78,7 +78,7 @@ function sendMessageToServer(clientdata) {
 	console.debug("Envoi d'un message au serveur : " + clientdata);
 	g_socket.send(clientdata);
 }
-// Get user list from the server 
+// Get user list from the server
 function getuserlist(playerList) {
 	console.debug('[getuserlist] Processing user list: ' + JSON.stringify(playerList));
     console.debug("[getuserlist] nombre de sessionId : " + playerList.length);
@@ -99,9 +99,9 @@ function run() {
 
 	g_Domblock = new DomBlock();
 	initObject();
-	
+
 	sendMessageToServer({action: 'userlist'});
-	
+
 	// On récupère l'objet canvas
 	var o_Canvas = document.getElementById('boardgame');
 	if (!o_Canvas || !o_Canvas.getContext) {
@@ -109,30 +109,30 @@ function run() {
 	}
 	BOARD_WIDTH = o_Canvas.width;
 	BOARD_HEIGHT = o_Canvas.height;
-	
+
 	//On récupère le contexte 2D
 	g_Context = o_Canvas.getContext('2d');
 	if (!g_Context) {
 		return;
 	}
-	
+
 	// Gestion des événements
 	window.document.onkeydown = keyboard;
 	window.document.onmousemove = myMouseMove;
 	window.document.onclick = myClick;
 	//window.document.onmouseover = test;
-	
+
 	// Le navigateur est compatible, le contexte a bien été récupéré, on peut continuer...
 	//gi_LoopID = setInterval(refresh, 40);
 	refresh();
 	console.debug("[run] Stop");
-} // run 
+} // run
 
 function test(event) {
 	if (event.target instanceof HTMLCanvasElement) {
 		var mouseX = event.pageX - event.target.offsetLeft;
 		var mouseY = event.pageY - event.target.offsetTop;
-		
+
 		console.debug("[test] mouseX: "+mouseX+", mouseY: " + mouseY);
 	}
 }
@@ -145,14 +145,14 @@ function initObject() {
 		g_socket.disconnect();
 		g_socket.connect();
 	}
-	
+
 	g_Domblock.initMap(g_NbColor);
 	g_Domblock.initZone();
-	
+
 	for (var i=0; i<g_Domblock.ROW; i++) {
-		
+
 		for (var j=0; j<g_Domblock.COL; j++) {
-			
+
 			var indice = i*g_Domblock.COL + j;
 			ga_ObjectList[indice] = new Bloc(0, 0);
 			var indexSprite = g_Domblock.map[i][j];
@@ -165,7 +165,7 @@ function initObject() {
 			if (i > 0) {
 				ga_ObjectList[indice].posY = i * ga_ObjectList[indice].heightSprite[indexSprite];
 			}
-			
+
 			//console.debug("[initObject] ind=" + indice + " :  [" + ga_ObjectList[indice].posX + ", " + ga_ObjectList[indice].posY +"]");
 		}
 	}
@@ -176,7 +176,7 @@ function refresh() {
 	clearContext(g_Context, 0, BOARD_WIDTH, 0, BOARD_HEIGHT);
 
 	//console.debug("[refresh] ga_ObjectList.length="+ga_ObjectList.length);
-	
+
 	for (var i=0; i<ga_ObjectList.length; i++) {
 		var obj = ga_ObjectList[i];
 		if (!b_Pause) {
@@ -203,9 +203,9 @@ function keyboard(event) {
 	//console.debug("[keyboard] Start");
 	//console.debug("Key = " + event.keyCode);
 	if (event.keyCode == 39) { // Fleche de droite pr�ss�e
-		
+
 	} else if (event.keyCode == 37) { // Fleche de gauche pr�ss�e
-		
+
 	} else if (event.keyCode == 80) { // touche 'p'
 		b_Pause = !b_Pause;
 	} else if (event.keyCode == 81) { // touche 'q'
@@ -220,7 +220,7 @@ function myMouseMove(event) {
 	if (event.target instanceof HTMLCanvasElement) {
 		var mouseX = event.pageX - event.target.offsetLeft;
 		var mouseY = event.pageY - event.target.offsetTop;
-		
+
 		var cubeIdRow = Math.floor(mouseY / 40);
 		var cubeIdCol = Math.floor(mouseX / 40);
 		if (g_Domblock.map[cubeIdRow] && g_Domblock.map[cubeIdRow][cubeIdCol] && g_Domblock.map[cubeIdRow][cubeIdCol] != 0) {
@@ -271,7 +271,8 @@ function myClick(event) {
             if (g_Domblock.indexZone > 1) {
                 numBloc = g_Domblock.indexZone + 1;
 				var bonus = g_Domblock.indexZone / (g_Domblock.COL * g_Domblock.ROW);
-				g_Score += g_Domblock.indexZone*Math.floor(g_PointCube*(1.5+bonus));
+				//g_Score += g_Domblock.indexZone*Math.floor(g_PointCube*(1.5+bonus));
+                g_Score += 55 + (numBloc-2)*g_PointCube;
                 g_Domblock.updateMap();
 			}
 			initHover();
@@ -324,7 +325,7 @@ function updatePane(numBloc, sendStatus) {
 	var totalCube = g_Domblock.COL * g_Domblock.ROW;
 	var goal = g_Domblock.nbDestroyedCube + "/" + Math.floor(g_StayingCubeByLevel[g_Level] * totalCube);
 	document.getElementById("goal").innerHTML = goal;
-	
+
 	if (sendStatus && g_socket != null) {
 
         var message = {
