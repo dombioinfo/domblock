@@ -13,7 +13,7 @@ server = http.createServer(function(req, res){
 		new RegExp("/*.js"),
 		new RegExp("/*.png")
 	);
-	
+
 	switch (true) {
 		case regex[0].test(path):
 			res.writeHead(200, {'Content-Type': 'text/html'});
@@ -76,7 +76,7 @@ io.on('connection', function(socket) {
 	socket.on('message', function(reqClient) {
 		console.log("[message] Action: " + reqClient.action + " - from client " + socket.sessionId);
 		switch (reqClient.action) {
-            
+
             case 'userlist':
                 console.log("[message][userlist] Send list to client: " + socket.sessionId);
                 socket.send({
@@ -113,14 +113,14 @@ io.on('connection', function(socket) {
 
 	socket.on('disconnect', function() {
 		console.log("[disconnect] Connected " + socket.sessionId + " terminated.");
-        if (clientList[sessionId].status == "connected") {
-            clientList[sessionId].status = null;
+        if (clientList[socket.sessionId].status == "connected") {
+            clientList[socket.sessionId].status = null;
         }
         socket.broadcast({
             action: "userlist",
             param: getSurnameList()
         });
-        delete clientList[socket.sessionId];
+        //delete clientList[socket.sessionId];
 	});
 });
 
