@@ -60,6 +60,9 @@ function initSocket(server) {
                 console.debug("["+data.action+"]"+JSON.stringify(data));
                 console.debug("data.param.numbloc: " + data.param.numbloc);
                 g_Domblock.addPenality(data.param.numbloc, DomBlock.PENALITY_MODIFY);
+                if (!g_Domblock.isContinuable()) {
+                    nextLevel();
+                } // if !isContinuable
                 refresh();
                 break;
             default:
@@ -277,19 +280,7 @@ function myClick(event) {
 			}
 			initHover();
 			if (!g_Domblock.isContinuable()) {
-				var totalCube = g_Domblock.COL * g_Domblock.ROW;
-				if (g_Domblock.nbDestroyedCube < Math.floor(g_StayingCubeByLevel[g_Level] * totalCube)) {
-					g_bGameOver = true;
-				} else {
-					g_Level++;
-					g_Domblock.nbDestroyedCube = 0;
-					g_NbColor += (g_Level%5==0) ? 1 : 0;
-					if (g_Level == g_StayingCubeByLevel.length) {
-						quit("End");
-						return(this);
-					}
-					run();
-				}
+				nextLevel();
 			} // if !isContinuable
             if (numBloc > 2) {
                 updatePane(numBloc, true);
@@ -299,6 +290,22 @@ function myClick(event) {
 	} // if HTMLCanvasElement
     return null;
 } // myClick
+
+function nextLevel() {
+    var totalCube = g_Domblock.COL * g_Domblock.ROW;
+    if (g_Domblock.nbDestroyedCube < Math.floor(g_StayingCubeByLevel[g_Level] * totalCube)) {
+        g_bGameOver = true;
+    } else {
+        g_Level++;
+        g_Domblock.nbDestroyedCube = 0;
+        g_NbColor += (g_Level%5==0) ? 1 : 0;
+        if (g_Level == g_StayingCubeByLevel.length) {
+            quit("End");
+            return(this);
+        }
+        run();
+    }
+}
 
 function clearContext(ctx, startwidth, ctxwidth, startheight, ctxheight) {
 	ctx.clearRect(startwidth, startheight, ctxwidth, ctxheight);
