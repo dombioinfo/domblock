@@ -29,39 +29,41 @@ var g_StayingCubeByLevel = new Array(
 );
 var g_blocPenality = 0;
 var g_sessionId = null;
-var g_server = "127.0.0.1";
+var g_server = "dev.domblock.com";
 var g_port = 1337;
 // Create SocketIO instance, connect
 var g_socket = null;
-var g_protocol = "ws";
+
+/*
+
+var sio = io.connect(), socket = sio.socket.of('/chat');
+socket
+.on('connect', function () {
+  // I'm connected
+})
+
+*/
 
 function initSocket(server) {
-    if (server == null) {
+    console.log("[initSocket] Start");
+    if (server === null) {
         server = g_server;
     }
-
-//    g_socket = new io.Socket(server, {
-//        port: g_port,
-//        transports: [ 'websocket' , 'xhr-multipart', 'xhr-polling' ]
-//    });
-    //g_socket = io.connect(g_protocol+'://'+g_server+':'+g_port);
-    g_socket = io.connect(g_server, {
+	g_socket = io.connect(g_server, {
         port: g_port,
         rememberTransport:false,
         connectTimeout:10000
     });
-    console.log(g_socket);
+
     // Add a connect listener
-    /*
-    g_socket.on('connect', function() {
+    g_socket.on('connection', function() {
         console.log('Client has connected to the server!');
         g_sessionId = this.sessionId;
     });
-    */
     //Add a message listener
     g_socket.on('message', function(data) {
         console.debug("Received a message from the server!");
-        console.debug("data: " + data);
+        console.debug(data);
         switch (data.action) {
             case "userlist":
                 console.debug("["+data.action+"]");
@@ -70,7 +72,7 @@ function initSocket(server) {
             case "bchit":
                 console.debug("["+data.action+"]"+JSON.stringify(data));
                 console.debug("data.param.numbloc: " + data.param.numbloc);
-                g_Domblock.addPenality(data.param.numbloc, DomBlock.PENALITY_MODIFY);
+                g_Domblock.applyPenality(data.param.numbloc, DomBlock.PENALITY_MODIFY);
                 if (!g_Domblock.isContinuable()) {
                     nextLevel();
                 } // if !isContinuable
@@ -85,12 +87,13 @@ function initSocket(server) {
     g_socket.on('disconnect', function() {
         console.log('The client has disconnected!');
     });
+    console.log("[initSocket] Stop");
 }
 
 // Sends a message to the server via sockets
 function sendMessageToServer(clientdata) {
 	console.debug("Envoi d'un message au serveur : " + clientdata);
-	g_socket.send(clientdata);
+	g_socket.emit("message", clientdata);
 }
 // Get user list from the server
 function getuserlist(playerList) {
@@ -107,7 +110,7 @@ function getuserlist(playerList) {
 function run() {
 	console.debug("[run] Start");
 	var inputServer = document.getElementById("server");
-    if (inputServer && inputServer != undefined) {
+    if (inputServer && inputServer !== undefined) {
         inputServer.value = g_server;
     }
 
@@ -155,9 +158,9 @@ function initObject() {
 	console.debug("[initObject] Start");
 
     // TODO : manage the unload event
-	if (g_socket !== null) {
-		g_socket.disconnect();
-		g_socket.connect();
+	if (g_socket === null) {
+        console.log("[initObject] reconnect");
+		g_socket.connect('http://'+g_server+':'+g_port);
 	}
 
 	g_Domblock.initMap(g_NbColor);
@@ -216,13 +219,13 @@ function refresh() {
 function keyboard(event) {
 	//console.debug("[keyboard] Start");
 	//console.debug("Key = " + event.keyCode);
-	if (event.keyCode === 39) { // Fleche de droite pr�ss�e
+	if (event.keyCode == 39) { // Fleche de droite pr�ss�e
 
-	} else if (event.keyCode === 37) { // Fleche de gauche pr�ss�e
+	} else if (event.keyCode == 37) { // Fleche de gauche pr�ss�e
 
-	} else if (event.keyCode === 80) { // touche 'p'
+	} else if (event.keyCode == 80) { // touche 'p'
 		b_Pause = !b_Pause;
-	} else if (event.keyCode === 81) { // touche 'q'
+	} else if (event.keyCode == 81) { // touche 'q'
 		// on stoppe l'animation
 		quit("Quit");
 	}
@@ -362,7 +365,7 @@ function updatePane(numBloc, sendStatus) {
 
 function updateServer(objId) {
     g_server = document.getElementById(objId).value;
-    if (g_server && g_server != undefined) {
+    if (g_server && g_server !== undefined) {
         initSocket(g_server);
     }
 }

@@ -6,9 +6,9 @@ function Bloc (initPosX, initPosY) {
 	this.dY = 0; // Math.random()%10;
 
 	this.imgObj = new Image();
-	this.imgObj.src = "./public/03_sprite_cube.png";
+	this.imgObj.src = "./03_sprite_cube.png";
 	this.imgObjHover = new Image();
-	this.imgObjHover.src = "./public/03_sprite_cube_hover.png";
+	this.imgObjHover.src = "./03_sprite_cube_hover.png";
 
 	// variables sp�cifiques
 	this.bHover = false;

@@ -1,0 +1,29 @@
+/* 
+    Document   : style
+    Created on : 3 avr. 2012, 12:15:52
+    Author     : djeannin
+    Description:
+        Purpose of the stylesheet follows.
+*/
+root { 
+    display: block;
+}
+html, body {
+    width:100%; margin:0; padding: 0;
+    text-align: center; background: #5A5A5A; width: 100%;
+}
+canvas {
+    width: 560px;height: 520px;margin-right: auto; margin-left: auto;background:#050505; margin: 5px; float:left; border:1px solid black;
+}
+fieldset {
+    width: 6em;margin-top:3px;background:#f9f9f9;
+}
+legend {
+    margin:0px 4px;background:#f9f9f9;
+}
+.left {
+    float: left
+}
+.clear {
+    clear: both;
+}
