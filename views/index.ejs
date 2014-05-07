@@ -11,14 +11,15 @@
 	<script type="text/javascript" src="/objects.js"></script>
 	<script type="text/javascript" src="/main.js"></script>
     <link rel="stylesheet" type="text/css" href="/style.css" />
+	<link rel="stylesheet" type="text/css" href="/icone.css" />
 </head>
 <body>
     <canvas id="boardgame" width="560" height="520">
         Your browser doesn't support HTML5
     </canvas>
-	<div class="left">
+	<div id="controlpane" class="left">
 
-        <fieldset>
+        <fieldset><legend>Serveur</legend>
             <form action="index.html" method="post" onsubmit="javascript:updateServer('server');">
                 <input id="server" type="text" name="server" value="" />
             </form>
@@ -32,9 +33,8 @@
 		<fieldset><legend>Score</legend>
             <div id="status"></div>
             <div id="score"></div>
-		</fieldset>
-        <fieldset><legend></legend>
-			<a href="" onclick="run();">New game</a>
+			<hr />
+			<button name="start" onclick="run();">New game</button>
 		</fieldset>
 		<fieldset><legend>User list</legend>
 			<ul id="userlist"></ul>
