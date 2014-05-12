@@ -102,7 +102,7 @@ function getuserlist(playerList) {
 	var userlistHTML = "";
 	for (var session in playerList) {
 		console.log("[getuserlist] surname: " + playerList[session]);
-        userlistHTML += "<li>"+playerList[session]+"</li>\n";
+        userlistHTML += "<li><i class=\"avatar-icon\">&nbsp;</i>"+playerList[session]+"</li>\n";
 	}
 	document.getElementById("userlist").innerHTML = userlistHTML;
 }

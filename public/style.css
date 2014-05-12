@@ -15,15 +15,43 @@ html, body {
 canvas {
     width: 560px;height: 520px;margin-right: auto; margin-left: auto;background:#050505; margin: 5px; float:left; border:1px solid black;
 }
-fieldset {
-    width: 6em;margin-top:3px;background:#f9f9f9;
-}
-legend {
-    margin:0px 4px;background:#f9f9f9;
-}
+
 .left {
     float: left
 }
 .clear {
     clear: both;
+}
+#controlpane {
+	width: 190px;
+	background: #cfcfcf;
+	text-align: center;
+	padding: 2px 2px 5px 2px;
+}
+#controlpane fieldset {
+	margin-top:3px;
+	background: #f9f9f9;
+}
+#controlpane fieldset legend {
+    margin:0px 4px;
+	width: 130px;
+	border-radius: 5px;
+	background:#f9f9f9;
+	border-top: 1px solid #000000;
+}
+#userlist {
+	margin: 0;
+	padding: 0;
+}
+#userlist li {
+	margin:0;
+	padding:0;
+	list-style: none;
+	top:0;
+	line-height: 1em;
+}
+i {
+	display: inline-block;
+	margin: 1px;
+	vertical-align: baseline;
 }
