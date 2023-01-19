@@ -1,0 +1,31 @@
+<canvas #canvas (mousemove)="myMouseMove($event)" (click)="myClick($event)" id="boardgame" width="560" height="520">
+  Your browser doesn't support HTML5
+</canvas>
+<div id="controlpane" class="left">
+
+  <fieldset>
+    <legend>Serveur</legend>
+    <form action="index.html" method="post" (ngSubmit)="updateServer('server');">
+      <input id="server" type="text" name="hostWs" value="" [(ngModel)]="hostWs"/>
+    </form>
+  </fieldset>
+
+  <fieldset>
+    <legend>Level/Goal</legend>
+    <input id="level" [(ngModel)]="levelView" type="text" readonly />
+    <hr />
+    <input id="goal" [(ngModel)]="goal" type="text" readonly >
+  </fieldset>
+  <fieldset>
+    <legend>Score</legend>
+    <input id="status" [(ngModel)]="status" type="text" readonly />
+    <input id="score" [(ngModel)]="score" type="text" readonly />
+    <hr />
+    <button name="start" (click)="run();">New game</button>
+  </fieldset>
+  <fieldset>
+    <legend>User list</legend>
+    <textarea id="userlist" [(ngModel)]="userListView" type="text" readonly></textarea>
+  </fieldset>
+</div>
+<div class="clear"></div>

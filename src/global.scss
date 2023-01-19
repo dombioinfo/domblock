@@ -1,0 +1,105 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "~@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "~@ionic/angular/css/normalize.css";
+@import "~@ionic/angular/css/structure.css";
+@import "~@ionic/angular/css/typography.css";
+@import '~@ionic/angular/css/display.css';
+
+/* Optional CSS utils that can be commented out */
+@import "~@ionic/angular/css/padding.css";
+@import "~@ionic/angular/css/float-elements.css";
+@import "~@ionic/angular/css/text-alignment.css";
+@import "~@ionic/angular/css/text-transformation.css";
+@import "~@ionic/angular/css/flex-utils.css";
+
+
+root {
+    display: block;
+}
+
+html,
+body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    background: #5A5A5A;
+    width: 100%;
+}
+
+canvas {
+    width: 560px;
+    height: 520px;
+    margin-right: auto;
+    margin-left: auto;
+    background: #050505;
+    margin: 5px;
+    float: left;
+    border: 1px solid black;
+}
+
+.left {
+    float: left
+}
+
+.clear {
+    clear: both;
+}
+
+#controlpane {
+    width: 250px;
+    background: #cfcfcf;
+    text-align: center;
+    padding: 2px 2px 5px 2px;
+}
+
+#controlpane fieldset {
+    margin-top: 3px;
+    background: #f9f9f9;
+}
+
+#controlpane fieldset legend {
+    margin: 0px 4px;
+    width: 130px;
+    border-radius: 5px;
+    background: #f9f9f9;
+    border-top: 1px solid #000000;
+}
+
+#userlist {
+    margin: 0;
+    padding: 0;
+}
+
+#userlist li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    top: 0;
+    line-height: 1em;
+}
+#score {
+    text-align: center;
+}
+#status {
+    text-align: center;
+    border: 0;
+}
+i {
+    display: inline-block;
+    margin: 1px;
+    vertical-align: baseline;
+}

@@ -1,0 +1,7 @@
+{
+  "name": "domblock",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
