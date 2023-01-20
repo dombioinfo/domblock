@@ -28,8 +28,9 @@ export class DomblockService {
     indexZone: number = -1;
     img: any;
     imgHover: any;
-
-    constructor(@Inject('nbMaxColor') private nbMaxColor: number = 3) {
+    nbMaxColor: number = 0;
+    constructor(@Inject('nbMaxColor') nbMaxColor: number = 3) {
+        this.nbMaxColor = nbMaxColor;
         this.img = new Image();
         this.img.onload = () => {
             console.debug('sprite hover cube loaded');

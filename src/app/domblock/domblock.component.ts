@@ -38,7 +38,7 @@ const g_StayingCubeByLevel: number[] = new Array(
   ]
 })
 export class DomblockComponent implements OnInit {
-  nbColor: number = 3;
+  // nbColor: number = 0;
   isGameOver = false;
   level: number = 0;
   levelView: number = this.level + 1;
@@ -65,6 +65,7 @@ export class DomblockComponent implements OnInit {
     // this.socket = new WebSocket('ws://' + this.hostWs + ':' + this.port + '/');
     // this.initSocket(this.hostWs);
     this.sessionId = uuidv4();
+    // this.nbColor = domblock.nbMaxColor;
   }
 
   ngOnInit() {
@@ -353,7 +354,7 @@ export class DomblockComponent implements OnInit {
       this.level++;
       this.levelView = this.level + 1;
       this.domblock.nbDestroyedCell = 0;
-      this.nbColor += (this.level % 5 == 0) ? 1 : 0;
+      this.domblock.nbMaxColor += (this.level % 5 == 0) ? 1 : 0;
       if (this.level == g_StayingCubeByLevel.length) {
         this.quit("End");
       }
