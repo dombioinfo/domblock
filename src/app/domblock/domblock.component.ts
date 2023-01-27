@@ -74,34 +74,34 @@ export class DomblockComponent implements OnInit {
     this.canvas = document.getElementById('boardgame') as HTMLCanvasElement;
     this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
 
-    this.socketService.receiveMessage().subscribe((message: string) => {
-      console.debug("Received a message from the server!", message);
-      let data: Message = JSON.parse(message);
-      switch (data.action) {
-        case "userlist":
-          console.debug("[" + data.action + "]");
-          //this.socketService.getUserList(/*data.param*/);
-          this.getUserList(data.param);
-          break;
-        case "bchit":
-          console.debug("[" + data.action + "]" + JSON.stringify(data));
-          console.debug("data.param.numbloc: " + data.param.numbloc);
-          this.domblock.applyPenality(data.param.numbloc, Penality.MODIFY);
-          if (!this.domblock.isContinuable()) {
-            this.nextLevel();
-          }
-          this.refresh();
-          break;
-        default:
-          console.warn("Action: '" + data.action + "' is not defined");
-          break;
-      }
-    });
-    this.socketService.getUserList().subscribe((userList: Player[]) => {
-      this.userList = userList;
-    });
-
-    this.run();
+    if (this.socketService) {
+      this.socketService.receiveMessage().subscribe((message: string) => {
+        console.debug("Received a message from the server!", message);
+        let data: Message = JSON.parse(message);
+        switch (data.action) {
+          case "userlist":
+            console.debug("[" + data.action + "]");
+            this.getUserList(data.param);
+            break;
+          case "bchit":
+            console.debug("[" + data.action + "]" + JSON.stringify(data));
+            console.debug("data.param.numbloc: " + data.param.numbloc);
+            this.domblock.applyPenality(data.param.numbloc, Penality.MODIFY);
+            if (!this.domblock.isContinuable()) {
+              this.nextLevel();
+            }
+            this.refresh();
+            break;
+          default:
+            console.warn("Action: '" + data.action + "' is not defined");
+            break;
+        }
+      });
+      this.socketService.getUserList().subscribe((userList: Player[]) => {
+        this.userList = userList;
+      });
+    }
+    this.start();
     console.debug("[ngOnInit] Stop");
   }
 
@@ -151,7 +151,7 @@ export class DomblockComponent implements OnInit {
     this.goal = goalCalculated;
 
     if (sendStatus && this.socketService != null) {
-      let message: object = {
+      let message: Message = {
         action: 'hit',
         param: {
           "numbloc": numBloc,
@@ -165,6 +165,15 @@ export class DomblockComponent implements OnInit {
     }
   }
 
+  start(): void {
+    this.level = 0;
+    this.levelView = this.level + 1;
+    this.score = 0;
+    this.goal = '';
+    this.isGameOver = false;
+    this.run();
+  }
+
   run(): void {
     console.debug("[run] Start");
     // var inputServer = document.getElementById("server");
@@ -173,7 +182,7 @@ export class DomblockComponent implements OnInit {
     // }
 
     this.domblock.initialize();
-
+    
     for (var i = 0; i < ROW; i++) {
       for (var j = 0; j < COL; j++) {
         let indice: number = i * COL + j;
@@ -192,6 +201,7 @@ export class DomblockComponent implements OnInit {
 
     this.refresh();
     this.status = 'C\'est parti !';
+    this.canvas.style.opacity = '1';
     console.debug("[run] Stop");
   } // run
 
@@ -204,12 +214,12 @@ export class DomblockComponent implements OnInit {
     //   // this.socket.connect('ws://' + this.hostWs + ':' + this.port);
     // }
 
-    this.canvas.style.opacity = '1';
-    this.isGameOver = false;
-    this.level = 0;
-    this.levelView = this.level + 1;
-    this.score = 0;
-    this.goal = '';
+    // this.canvas.style.opacity = '1';
+    // this.isGameOver = false;
+    // this.level = 0;
+    // this.levelView = this.level + 1;
+    // this.score = 0;
+    // this.goal = '';
     this.initHover();
 
     this.domblock.initialize();

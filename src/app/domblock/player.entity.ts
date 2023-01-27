@@ -1,13 +1,13 @@
-export type Message = {
-    action: string,
-    param: any
+export class Message {
+    action: string = '';
+    param: any;
 }
 
-export type Data = {
-    numbloc: number,
-    level: number,
-    score: number,
-    goal: string
+export class Data {
+    numbloc: number = 0;
+    level: number = 0;
+    score: number = 0;
+    goal: string = '';
 }
 
 export class Player {
